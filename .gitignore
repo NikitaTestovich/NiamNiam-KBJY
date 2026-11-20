@@ -1,5 +1,7 @@
 .gradle/
 .kotlin/
+.android/
+.superpowers/
 build/
 .idea/
 *.iml

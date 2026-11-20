@@ -1,0 +1,27 @@
+# Источники каталога
+
+## Распознавание текста и кодов
+
+Для автономного распознавания этикеток используются Tesseract4Android 4.9.0 и модели `rus` и `eng` из репозитория tessdata_fast. Для штрихкодов используется встроенная модель ML Kit Barcode Scanning. До выпуска необходимо включить полные уведомления и тексты лицензий Tesseract4Android, его нативных зависимостей и моделей, а также проверить точность на реальных упаковках.
+
+- [Tesseract4Android и его зависимости](https://github.com/adaptech-cz/Tesseract4Android)
+- [Модели tessdata_fast](https://github.com/tesseract-ocr/tessdata_fast)
+- [ML Kit Barcode Scanning](https://developers.google.com/ml-kit/vision/barcode-scanning/android)
+
+## USDA FoodData Central
+
+Данные USDA FoodData Central опубликованы под CC0 1.0. USDA просит указывать FoodData Central в качестве источника. На странице загрузок доступны Foundation Foods, SR Legacy и Food and Nutrient Database for Dietary Studies (FNDDS). Последний набор содержит данные о готовых блюдах.
+
+- [Условия использования и рекомендуемое указание источника](https://fdc.nal.usda.gov/)
+- [Архивы и даты выпусков](https://fdc.nal.usda.gov/download-datasets/)
+- [Описание полей](https://fdc.nal.usda.gov/portal-data/external/dataDictionary)
+- [FNDDS 2021–2023, JSON, выпуск 2024-10-31](https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_survey_food_json_2024-10-31.zip)
+- [SR Legacy, JSON, выпуск 2018-04](https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_json_2018-04.zip)
+
+Архив FNDDS загружен, SHA-256 — `dfb06ae7ddc397ccd570b91c14b75438ab2ba39f64f22d321f61d4a52a77f3eb`. Скрипт `data/build_fndds_catalog.py` создаёт `android/app/src/main/assets/fndds_2021_2023.json`. Из 5432 записей включена 5431. Одна запись не содержит значений КБЖУ и пропущена. Значения каждого поля каждого результата сверены с оригиналом по идентификатору питательного вещества, единицам и числу. Идентификаторы источника и версия сохранены вместе с данными.
+
+Для воспроизведения запустите `python data/build_fndds_catalog.py data/fndds-2021-2023.zip android/app/src/main/assets/fndds_2021_2023.json` из корня проекта. Показатели энергии указаны в ккал на 100 г, показатели БЖУ — в граммах на 100 г съедобной части. [Описание полей FNDDS](https://www.ars.usda.gov/ARSUserFiles/80400530/pdf/fndds/2021_2023_Contents_of_Datasets.pdf).
+
+Пользовательский контрольный список, переводы и соответствия между названиями должны быть подготовлены отдельно. USDA ориентирован на американский рынок и не подтверждает покрытие грузинских, русских и украинских блюд или местных штрихкодов. Не следует считать процент покрытия выполненным до прогона замороженных запросов через фактический поиск приложения.
+
+Значения продуктов и рецептов нужно импортировать вместе с идентификатором FDC, источником и выпуском, проверив единицы, энергетическую ценность и наличие белков, жиров и углеводов. Нельзя автоматически подменять отсутствующие показатели нулями. Переводы и соответствия блюд требуют отдельной проверки.
