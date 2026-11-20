@@ -3,6 +3,7 @@ package com.niamniam.kbjy
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -17,6 +18,7 @@ import com.niamniam.kbjy.data.DiaryDatabase
 import com.niamniam.kbjy.data.DiaryEntry
 import com.niamniam.kbjy.data.Food
 import com.niamniam.kbjy.data.StarterCatalog
+import com.niamniam.kbjy.data.PackagedFood
 import com.niamniam.kbjy.scanner.ManualFoodScreen
 import com.niamniam.kbjy.scanner.ManualFoodUnit
 import com.niamniam.kbjy.scanner.CaptureScreen
@@ -40,6 +42,7 @@ import com.niamniam.kbjy.reports.ReportScreen
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
 
@@ -68,8 +71,10 @@ class MainActivity : ComponentActivity() {
                 val foodsFlow = remember { dao.observeFoods() }
                 val foods by foodsFlow.collectAsState(initial = emptyList())
                 var starterFoods by remember { mutableStateOf<List<Food>>(emptyList()) }
+                var packagedFoods by remember { mutableStateOf<List<PackagedFood>>(emptyList()) }
                 LaunchedEffect(Unit) {
                     starterFoods = withContext(Dispatchers.IO) { StarterCatalog.load(applicationContext) }
+                    packagedFoods = withContext(Dispatchers.IO) { StarterCatalog.loadPackaged(applicationContext) }
                 }
                 val scope = rememberCoroutineScope()
                 var screen by remember { mutableStateOf(if (loadedProfile.isFailure) "profile_error" else if (profileState == null) "profile" else "today") }
@@ -84,11 +89,19 @@ class MainActivity : ComponentActivity() {
                 var recognizedLabel by remember { mutableStateOf<ParsedLabel?>(null) }
                 var recognizing by remember { mutableStateOf(false) }
                 var saving by remember { mutableStateOf(false) }
+                var saveError by remember { mutableStateOf(false) }
                 val saveDate = entryDate ?: date
                 val historyFlow = remember(historyDate) { dao.observeDay(historyDate.toString()) }
                 val historyEntries by key(historyDate) { historyFlow.collectAsState(initial = emptyList()) }
                 val language = profileState?.profile?.language ?: AppLanguage.RUSSIAN
                 val english = language == AppLanguage.ENGLISH
+                BackHandler(enabled = screen != "today" && screen != "profile_error" && profileState != null) {
+                    screen = when (screen) {
+                        "new" -> if (entryDate == null) "today" else "foods"
+                        "label" -> "new"
+                        else -> "today"
+                    }
+                }
                 Surface(Modifier.fillMaxSize()) {
                     when (screen) {
                         "label" -> Column {
@@ -123,7 +136,9 @@ class MainActivity : ComponentActivity() {
                                             if (code == null) scanError = true
                                             else scope.launch {
                                                 val food = dao.findByBarcode(code)
-                                                if (food == null) { scannedCode = code; screen = "new" }
+                                                val starter = packagedFoods.firstOrNull { it.code == code }
+                                                if (food == null && starter != null) { scannedCode = code; selected = starter.food; screen = "foods" }
+                                                else if (food == null) { scannedCode = code; screen = "new" }
                                                 else { scannedCode = null; selected = food; screen = "foods" }
                                             }
                                         }
@@ -180,7 +195,7 @@ class MainActivity : ComponentActivity() {
                                 val unit = if (input.unit == ManualFoodUnit.GRAMS) "г" else "мл"
                                 val food = Food(name = input.name, unit = unit, caloriesPer100 = input.caloriesPer100,
                                     proteinPer100 = input.proteinPer100, fatPer100 = input.fatPer100,
-                                    carbohydratePer100 = input.carbsPer100)
+                                    carbohydratePer100 = input.carbsPer100, defaultPortion = input.portion)
                                 scope.launch {
                                     try {
                                         dao.saveNewFoodAndEntry(food, food.entry(saveDate, input.portion, meal), scannedCode)
@@ -189,7 +204,9 @@ class MainActivity : ComponentActivity() {
                                         scanError = false
                                         screen = if (entryDate == null) "today" else "history"
                                         entryDate = null
-                                    } finally { saving = false }
+                                    } catch (e: CancellationException) { throw e }
+                                    catch (_: Exception) { saveError = true }
+                                    finally { saving = false }
                                 }
                             }, english = english, recognized = recognizedLabel)
                         }
@@ -198,15 +215,19 @@ class MainActivity : ComponentActivity() {
                             TextButton(onClick = { screen = "today" }) { Text(if (english) "Back" else "Назад") }
                             Text(if (english) "Food search" else "Поиск продуктов", style = MaterialTheme.typography.headlineSmall)
                             Text(if (english) "USDA FoodData Central values are estimates per 100 g." else "Данные USDA FoodData Central ориентировочные, на 100 г.", style = MaterialTheme.typography.bodySmall)
+                            Text("Open Food Facts contributors · ODbL · openfoodfacts.org", style = MaterialTheme.typography.bodySmall)
                             OutlinedTextField(query, { query = it }, label = { Text(if (english) "Search" else "Поиск") })
                             TextButton(onClick = { screen = "new" }) { Text(if (english) "New food" else "Новый продукт") }
                             LazyColumn {
                                 items(foods.filter { StarterCatalog.matches(it.name, query) }, key = { "saved-${it.id}" }) { food ->
-                                    TextButton(onClick = { selected = food }) { Text(food.name) }
+                                    TextButton(onClick = { scannedCode = null; selected = food }) { Text(food.name) }
                                 }
                                 if (query.isNotBlank()) {
+                                    items(packagedFoods.filter { StarterCatalog.matches(it.food.name, query) }.take(100)) { product ->
+                                        TextButton(onClick = { scannedCode = product.code; selected = product.food }) { Text(product.food.name + " · Open Food Facts") }
+                                    }
                                     items(starterFoods.filter { StarterCatalog.matches(it.name, query) }.take(100)) { food ->
-                                        TextButton(onClick = { selected = food }) { Text(food.name + " · USDA") }
+                                        TextButton(onClick = { scannedCode = null; selected = food }) { Text(food.name + " · USDA") }
                                     }
                                 }
                             }
@@ -290,6 +311,14 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }
+                if (saveError) {
+                    AlertDialog(
+                        onDismissRequest = { saveError = false },
+                        title = { Text(if (english) "Could not save" else "Не удалось сохранить") },
+                        text = { Text(if (english) "Check available storage and try again." else "Проверьте свободное место и попробуйте ещё раз.") },
+                        confirmButton = { TextButton(onClick = { saveError = false }) { Text("OK") } },
+                    )
+                }
                 if (showWater) {
                     var waterAmount by remember { mutableStateOf("") }
                     val water = waterAmount.replace(',', '.').toDoubleOrNull()
@@ -311,25 +340,49 @@ class MainActivity : ComponentActivity() {
                     )
                 }
                 selected?.let { food ->
-                    var amount by remember(food.id) { mutableStateOf("") }
-                    val value = amount.replace(',', '.').toDoubleOrNull()
+                    var amount by remember(food.id) { mutableStateOf((food.defaultPortion ?: 100.0).toString()) }
+                    var portions by remember(food.id) { mutableStateOf("1") }
+                    var saveDefault by remember(food.id) { mutableStateOf(false) }
+                    val unitWeight = amount.replace(',', '.').toDoubleOrNull()
+                    val count = portions.replace(',', '.').toDoubleOrNull()
+                    val value = if (unitWeight != null && count != null) unitWeight * count else null
                     val recipe by database.recipeDao().observeRecipe(food.id).collectAsState(initial = null)
                     val ingredients by database.recipeDao().observeIngredients(food.id).collectAsState(initial = emptyList())
                     AlertDialog(
-                        onDismissRequest = { selected = null },
+                        onDismissRequest = { selected = null; scannedCode = null },
                         title = { Text(food.name) },
-                        text = { OutlinedTextField(amount, { amount = it }, label = { Text((if (english) "Portion" else "Порция") + ", " + displayUnit(food.unit, english)) }) },
+                        text = {
+                            Column {
+                                OutlinedTextField(portions, { portions = it }, label = { Text(if (english) "Number of portions" else "Количество порций") })
+                                OutlinedTextField(amount, { amount = it }, label = { Text((if (english) "Size of one portion" else "Размер одной порции") + ", " + displayUnit(food.unit, english)) })
+                                Row {
+                                    Checkbox(checked = saveDefault, onCheckedChange = { saveDefault = it })
+                                    Text(if (english) "Save as usual portion" else "Сохранить обычный вес порции")
+                                }
+                            }
+                        },
                         confirmButton = {
-                            TextButton(enabled = !saving && value != null && value.isFinite() && value > 0, onClick = {
+                            TextButton(enabled = !saving && unitWeight != null && unitWeight.isFinite() && unitWeight > 0 &&
+                                count != null && count.isFinite() && count > 0 && value != null && value.isFinite() && value > 0, onClick = {
                                 saving = true
                                 scope.launch {
                                     try {
-                                        if (food.id == 0L) dao.saveNewFoodAndEntry(food, food.entry(saveDate, value!!, meal))
-                                        else dao.insert(food.entry(saveDate, value!!, meal))
+                                        database.withTransaction {
+                                            if (food.id == 0L) {
+                                                val saved = if (saveDefault) food.copy(defaultPortion = unitWeight) else food
+                                                dao.saveNewFoodAndEntry(saved, food.entry(saveDate, value!!, meal), scannedCode)
+                                            } else {
+                                                if (saveDefault) dao.updateFood(food.copy(defaultPortion = unitWeight))
+                                                dao.insert(food.entry(saveDate, value!!, meal))
+                                            }
+                                        }
+                                        scannedCode = null
                                         selected = null
                                         screen = if (entryDate == null) "today" else "history"
                                         entryDate = null
-                                    } finally { saving = false }
+                                    } catch (e: CancellationException) { throw e }
+                                    catch (_: Exception) { saveError = true }
+                                    finally { saving = false }
                                 }
                             }) { Text(if (english) "Add" else "Добавить") }
                         },
@@ -342,7 +395,7 @@ class MainActivity : ComponentActivity() {
                                         screen = "recipe"
                                     }) { Text(if (english) "Edit recipe" else "Изменить рецепт") }
                                 }
-                                TextButton(onClick = { selected = null }) { Text(if (english) "Cancel" else "Отмена") }
+                                TextButton(onClick = { selected = null; scannedCode = null }) { Text(if (english) "Cancel" else "Отмена") }
                             }
                         },
                     )

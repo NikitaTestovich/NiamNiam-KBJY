@@ -42,6 +42,7 @@ data class Food(
     val proteinPer100: Double,
     val fatPer100: Double,
     val carbohydratePer100: Double,
+    val defaultPortion: Double? = null,
 )
 
 @Entity(tableName = "food_barcodes")
@@ -87,23 +88,28 @@ interface DiaryDao {
     }
 }
 
-@Database(entities = [DiaryEntry::class, Food::class, RecipeRecord::class, RecipeIngredientRecord::class, FoodBarcode::class], version = 3, exportSchema = false)
+@Database(entities = [DiaryEntry::class, Food::class, RecipeRecord::class, RecipeIngredientRecord::class, FoodBarcode::class], version = 4, exportSchema = false)
 abstract class DiaryDatabase : RoomDatabase() {
     abstract fun diaryDao(): DiaryDao
     abstract fun recipeDao(): RecipeDao
 
     companion object {
         @Volatile private var instance: DiaryDatabase? = null
-        private val migration1To2 = object : Migration(1, 2) {
+        val migration1To2 = object : Migration(1, 2) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("CREATE TABLE IF NOT EXISTS recipes (foodId INTEGER NOT NULL, cookedWeight REAL NOT NULL, PRIMARY KEY(foodId))")
                 db.execSQL("CREATE TABLE IF NOT EXISTS recipe_ingredients (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, recipeFoodId INTEGER NOT NULL, sourceFoodId INTEGER NOT NULL, name TEXT NOT NULL, unit TEXT NOT NULL, caloriesPer100 REAL NOT NULL, proteinPer100 REAL NOT NULL, fatPer100 REAL NOT NULL, carbohydratePer100 REAL NOT NULL, amount REAL NOT NULL)")
                 db.execSQL("CREATE INDEX IF NOT EXISTS index_recipe_ingredients_recipeFoodId ON recipe_ingredients(recipeFoodId)")
             }
         }
-        private val migration2To3 = object : Migration(2, 3) {
+        val migration2To3 = object : Migration(2, 3) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("CREATE TABLE IF NOT EXISTS food_barcodes (code TEXT NOT NULL, foodId INTEGER NOT NULL, PRIMARY KEY(code))")
+            }
+        }
+        val migration3To4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE foods ADD COLUMN defaultPortion REAL")
             }
         }
 
@@ -112,7 +118,7 @@ abstract class DiaryDatabase : RoomDatabase() {
                 context.applicationContext,
                 DiaryDatabase::class.java,
                 "diary.db",
-            ).addMigrations(migration1To2, migration2To3).build().also { instance = it }
+            ).addMigrations(migration1To2, migration2To3, migration3To4).build().also { instance = it }
         }
     }
 }

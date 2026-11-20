@@ -3,6 +3,8 @@ package com.niamniam.kbjy.data
 import android.content.Context
 import org.json.JSONObject
 
+data class PackagedFood(val code: String, val food: Food)
+
 object StarterCatalog {
     fun matches(name: String, query: String): Boolean {
         fun normalize(value: String) = value.lowercase().replace('ё', 'е').trim()
@@ -36,6 +38,26 @@ object StarterCatalog {
                 proteinPer100 = item.getDouble("protein"),
                 fatPer100 = item.getDouble("fat"),
                 carbohydratePer100 = item.getDouble("carbohydrate"),
+            )
+        }
+    }
+
+    fun loadPackaged(context: Context): List<PackagedFood> {
+        val text = context.assets.open("off_regional_sample.json").bufferedReader(Charsets.UTF_8).use { it.readText() }
+        val products = JSONObject(text).getJSONArray("products")
+        return List(products.length()) { index ->
+            val item = products.getJSONObject(index)
+            val brand = item.optString("brand")
+            PackagedFood(
+                item.getString("code"),
+                Food(
+                    name = listOf(item.getString("name"), brand).filter { it.isNotBlank() }.joinToString(" · "),
+                    unit = "g",
+                    caloriesPer100 = item.getDouble("calories"),
+                    proteinPer100 = item.getDouble("protein"),
+                    fatPer100 = item.getDouble("fat"),
+                    carbohydratePer100 = item.getDouble("carbohydrate"),
+                ),
             )
         }
     }
