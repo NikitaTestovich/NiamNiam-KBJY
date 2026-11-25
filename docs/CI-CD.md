@@ -103,6 +103,8 @@ HTML и XML: `app/build/reports/coverage/test/debug/` для unit и `app/build/
 
 После отправки `5d46594` первый GitHub Actions остановился в обоих заданиях на `processDebugNavigationResources`. В `verification-metadata.xml` отсутствовал POM `org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.7.3`. SHA-256 добавлен после сверки артефакта Maven Central с опубликованной суммой SHA-1 и локальной копией. Изолированная проверка Gradle воспроизвела отказ до изменения и приняла тот же POM со строгой проверкой после изменения. [Исходный прогон GitHub Actions](https://github.com/NikitaTestovich/NiamNiam-KBJY/actions/runs/45682905145)
 
+После отправки `a5863dd` сборка, модульные тесты и lint прошли на GitHub. Инструментальные тесты запустились на Android 15, но Gradle сообщил об их падении. В журнал проверки JUnit добавлен вывод класса, имени упавшего теста и типа исключения. Полный текст assertion и параметры теста остаются в отчёте. [Повторный прогон GitHub Actions](https://github.com/NikitaTestovich/NiamNiam-KBJY/actions/runs/45685041090)
+
 ## Источники технических решений
 
 - [Android: отчёты покрытия и встроенные задачи AGP](https://developer.android.com/studio/test/coverage-report).

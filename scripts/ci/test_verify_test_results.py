@@ -35,6 +35,25 @@ class VerifyResultsTest(unittest.TestCase):
         with self.assertRaises(Exception):
             verify(self.report('not xml'))
 
+    def test_failure_names_the_test_without_printing_its_payload(self):
+        directory = self.report(
+            '<testsuites failures="1"><testsuite failures="1">'
+            '<testcase classname="com.niamniam.ScannerTest" name="readsLabel[private input]">'
+            '<failure type="java.lang.AssertionError" message="private label">private data</failure>'
+            '</testcase></testsuite></testsuites>'
+        )
+        with self.assertRaises(ValueError) as failure:
+            verify(directory)
+        message = str(failure.exception)
+        self.assertEqual(1, message.count("com.niamniam.ScannerTest#readsLabel"))
+        self.assertIn("java.lang.AssertionError", message)
+        self.assertNotIn("private", message)
+
+    def test_report_identifies_runner_only_errors(self):
+        directory = self.report('<testsuites errors="1"><testsuite/></testsuites>')
+        with self.assertRaisesRegex(ValueError, "Runner error in TEST-example.xml"):
+            verify(directory)
+
 
 if __name__ == "__main__":
     unittest.main()
