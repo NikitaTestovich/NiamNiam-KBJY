@@ -87,7 +87,7 @@ fun TodaySummary(totals: DiaryItem, goal: DailyGoal?, english: Boolean) {
                     MacroPlate(values, targets, colors,
                         Modifier.widthIn(max = 128.dp).fillMaxWidth().aspectRatio(1f).testTag("macro-plate"))
                 }
-                Column(Modifier.weight(0.66f)) {
+                Column(Modifier.weight(0.66f).testTag("macro-legend")) {
                     labels.forEachIndexed { index, label ->
                         if (index > 0) HorizontalDivider()
                         MacroLegendRow(label, values[index], targets[index], english, colors[index])
