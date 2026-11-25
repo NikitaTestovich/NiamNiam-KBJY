@@ -25,6 +25,11 @@ android {
             enableUnitTestCoverage = true
             enableAndroidTestCoverage = true
         }
+        release {
+            ndk {
+                abiFilters += setOf("arm64-v8a", "armeabi-v7a")
+            }
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

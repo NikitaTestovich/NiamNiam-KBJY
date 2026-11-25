@@ -7,6 +7,10 @@ from verify_release_apk import verify_archive, verify_badging
 
 
 BADGING = "package: name='com.niamniam.kbjy' versionCode='1' versionName='0.5' compileSdkVersion='37'\n"
+ARM_LIBRARIES = {
+    "lib/arm64-v8a/libscanner.so": b"arm64 library",
+    "lib/armeabi-v7a/libscanner.so": b"arm library",
+}
 
 
 class VerifyReleaseApkTest(unittest.TestCase):
@@ -17,7 +21,7 @@ class VerifyReleaseApkTest(unittest.TestCase):
         with ZipFile(path, "w") as archive:
             archive.writestr("AndroidManifest.xml", b"compiled manifest")
             archive.writestr("classes.dex", b"code")
-            for name, value in files.items():
+            for name, value in (ARM_LIBRARIES | files).items():
                 archive.writestr(name, value)
         return path
 
@@ -36,6 +40,18 @@ class VerifyReleaseApkTest(unittest.TestCase):
     def test_clean_archive_allows_offline_models_and_licenses(self):
         verify_archive(self.apk({"assets/tessdata/rus.traineddata": b"\x00model",
                                  "assets/licenses/Apache-2.0.txt": b"license"}))
+
+    def test_archive_rejects_extra_native_abi(self):
+        with self.assertRaisesRegex(ValueError, "APK native ABIs"):
+            verify_archive(self.apk({"lib/x86_64/libscanner.so": b"x86 library"}))
+
+    def test_archive_requires_both_arm_abis(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "arm64-only.apk"
+            with ZipFile(path, "w") as archive:
+                archive.writestr("lib/arm64-v8a/libscanner.so", b"arm64 library")
+            with self.assertRaisesRegex(ValueError, "APK native ABIs"):
+                verify_archive(path)
 
     def test_archive_rejects_test_or_private_payload(self):
         for name in ("assets/ocr/label.png", "assets/basic-products-ru.tsv", "assets/diary.sqlite-wal"):

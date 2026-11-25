@@ -12,6 +12,7 @@ from verify_public_files import LOCAL_FILE, inspect_content
 
 APPLICATION_ID = "com.niamniam.kbjy"
 TEST_ASSETS = {"assets/basic-products-ru.tsv", "assets/prepared-dishes-ru.tsv"}
+RELEASE_ABIS = {"arm64-v8a", "armeabi-v7a"}
 
 
 def verify_badging(badging: str, version_name: str, version_code: int) -> None:
@@ -32,8 +33,12 @@ def verify_archive(path: Path) -> None:
         damaged = archive.testzip()
         if damaged is not None:
             raise ValueError(f"Corrupt APK entry: {json.dumps(damaged)}")
+        abis = set()
         for entry in archive.infolist():
             name = entry.filename
+            library = re.fullmatch(r"lib/([^/]+)/[^/]+\.so", name)
+            if library:
+                abis.add(library.group(1))
             if name.startswith("assets/ocr/") or name in TEST_ASSETS or LOCAL_FILE.search(name):
                 raise ValueError(f"Unexpected APK entry: {json.dumps(name)}")
             if not entry.is_dir() and (name.startswith("assets/") or name.endswith(".dex")):
@@ -41,6 +46,8 @@ def verify_archive(path: Path) -> None:
                 if findings:
                     rules = ", ".join(rule for rule, _ in findings)
                     raise ValueError(f"Unexpected {rules} in APK entry {json.dumps(name)}")
+        if abis != RELEASE_ABIS:
+            raise ValueError(f"APK native ABIs must be {sorted(RELEASE_ABIS)}, found {sorted(abis)}")
 
 
 def main() -> None:
