@@ -22,6 +22,41 @@ class TodaySummaryTest {
     @get:Rule val compose = createComposeRule()
 
     @Test
+    fun showsCalorieRingAndMacroPlateBeforeGoalIsSet() {
+        compose.setContent {
+            MaterialTheme {
+                TodaySummary(DiaryItem(820.0, 50.0, 30.0, 80.0, 0.0), goal = null, english = false)
+            }
+        }
+
+        compose.onNodeWithTag("calorie-ring").assertIsDisplayed()
+        compose.onNodeWithTag("macro-plate").assertIsDisplayed()
+        compose.onNodeWithText("820").assertIsDisplayed()
+        compose.onNodeWithText("ккал за день").assertIsDisplayed()
+        compose.onNodeWithText("Цель не задана").assertIsDisplayed()
+        for (amount in listOf("50 г", "30 г", "80 г")) {
+            compose.onNodeWithText(amount).assertIsDisplayed()
+        }
+        compose.onNodeWithText("ккал осталось").assertDoesNotExist()
+    }
+
+    @Test
+    fun emptyDayStillShowsBothChartsInEnglish() {
+        compose.setContent {
+            MaterialTheme {
+                TodaySummary(DiaryItem(0.0, 0.0, 0.0, 0.0, 0.0), goal = null, english = true)
+            }
+        }
+
+        compose.onNodeWithTag("calorie-ring").assertIsDisplayed()
+        compose.onNodeWithTag("macro-plate").assertIsDisplayed()
+        compose.onNodeWithText("0").assertIsDisplayed()
+        compose.onNodeWithText("kcal today").assertIsDisplayed()
+        compose.onNodeWithText("No daily goal").assertIsDisplayed()
+        compose.onNodeWithText("Carbohydrates").assertIsDisplayed()
+    }
+
+    @Test
     fun showsCalorieAndMacroOveragesInText() {
         compose.setContent {
             MaterialTheme {
