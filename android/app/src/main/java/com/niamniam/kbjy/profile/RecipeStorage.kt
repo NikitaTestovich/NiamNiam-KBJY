@@ -32,6 +32,9 @@ data class RecipeIngredientRecord(
 
 @Dao
 interface RecipeDao {
+    @Query("SELECT foodId FROM recipes")
+    fun observeRecipeFoodIds(): Flow<List<Long>>
+
     @Query("SELECT * FROM recipes WHERE foodId = :foodId")
     fun observeRecipe(foodId: Long): Flow<RecipeRecord?>
 

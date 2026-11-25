@@ -1,13 +1,15 @@
 package com.niamniam.kbjy
 
+import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import androidx.test.core.app.ApplicationProvider
+import android.graphics.BitmapFactory
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
+import com.googlecode.tesseract.android.TessBaseAPI
 import com.niamniam.kbjy.scanner.LabelBasis
 import com.niamniam.kbjy.scanner.LabelRecognizer
+import com.niamniam.kbjy.scanner.ParsedLabel
+import java.io.File
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -15,36 +17,55 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class LabelRecognizerTest {
     @Test
-    fun bundledModelsReadClearRussianNutritionLabel() {
-        val image = Bitmap.createBitmap(1400, 500, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(image)
-        canvas.drawColor(Color.WHITE)
-        val paint = Paint().apply { color = Color.BLACK; textSize = 64f; isAntiAlias = true }
-        listOf("на 100 г", "Энергия 120 ккал", "Белки 5 г", "Жиры 3 г", "Углеводы 20 г")
-            .forEachIndexed { index, line -> canvas.drawText(line, 30f, 80f + index * 80f, paint) }
-        val result = LabelRecognizer.recognize(ApplicationProvider.getApplicationContext(), image)
-        assertEquals(LabelBasis.PER_100_GRAMS, result.basis)
-        assertEquals(120.0, result.calories!!, 0.0)
-        assertEquals(5.0, result.protein!!, 0.0)
-    }
+    fun bundledModelsReadClearRussianNutritionLabel() = verifyLabel(
+        "nutrition-ru.png", ParsedLabel(LabelBasis.PER_100_GRAMS, 120.0, 5.0, 3.0, 20.0),
+    )
 
     @Test
-    fun bundledModelsReadClearEnglishNutritionLabel() {
-        val image = Bitmap.createBitmap(1400, 500, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(image)
-        canvas.drawColor(Color.WHITE)
-        val paint = Paint().apply { color = Color.BLACK; textSize = 64f; isAntiAlias = true }
-        listOf("per 100 g", "Energy 120 kcal", "Protein 5 g", "Fat 3 g", "Carbohydrates 20 g")
-            .forEachIndexed { index, line -> canvas.drawText(line, 30f, 80f + index * 80f, paint) }
-        val result = LabelRecognizer.recognize(ApplicationProvider.getApplicationContext(), image)
-        val context = ApplicationProvider.getApplicationContext<android.content.Context>()
-        val api = com.googlecode.tesseract.android.TessBaseAPI()
-        api.init(java.io.File(context.filesDir, "tesseract").absolutePath, "eng+rus")
-        api.setImage(image)
-        val recognizedText = api.getUTF8Text()
-        api.recycle()
-        assertEquals("OCR text: $recognizedText", LabelBasis.PER_100_GRAMS, result.basis)
-        assertEquals(120.0, result.calories!!, 0.0)
-        assertEquals(5.0, result.protein!!, 0.0)
+    fun bundledModelsReadClearEnglishNutritionLabel() = verifyLabel(
+        "nutrition-en.png", ParsedLabel(LabelBasis.PER_100_GRAMS, 120.0, 5.0, 3.0, 20.0),
+    )
+
+    @Test
+    fun bundledModelsReadRussianDrinkLabelWithDecimalCommas() = verifyLabel(
+        "nutrition-drink-ru.png", ParsedLabel(LabelBasis.PER_100_MILLILITERS, 45.0, 0.5, 0.1, 10.2),
+    )
+
+    @Test
+    fun bundledModelsReadThePer100GramsColumnOfANutritionTable() = verifyLabel(
+        "nutrition-two-columns.png", ParsedLabel(LabelBasis.PER_100_GRAMS, 200.0, 10.0, 8.0, 22.0),
+    )
+
+    private fun verifyLabel(filename: String, expected: ParsedLabel) {
+        val instrumentation = InstrumentationRegistry.getInstrumentation()
+        val context = instrumentation.targetContext
+        val image = instrumentation.context.assets.open("ocr/$filename").use { stream ->
+            checkNotNull(BitmapFactory.decodeStream(stream)) { "Could not decode $filename" }
+        }
+        try {
+            val result = LabelRecognizer.recognize(context, image)
+            println("$filename: $result")
+            val message = if (result == expected) filename else {
+                val diagnostic = listOf("eng+rus", "eng").joinToString("\n") { language ->
+                    "$language: ${readDiagnosticText(context, image, language)}"
+                }
+                "$filename OCR text:\n$diagnostic"
+            }
+            assertEquals(message, expected, result)
+        } finally {
+            image.recycle()
+        }
+    }
+
+    private fun readDiagnosticText(context: Context, image: Bitmap, language: String): String? {
+        val api = TessBaseAPI()
+        try {
+            val data = File(context.filesDir, "tesseract")
+            if (!api.init(data.absolutePath, language)) return "Could not initialize diagnostic OCR"
+            api.setImage(image)
+            return api.getUTF8Text()
+        } finally {
+            api.recycle()
+        }
     }
 }

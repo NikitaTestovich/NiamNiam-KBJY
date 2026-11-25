@@ -55,8 +55,9 @@ class ProfileStore(context: Context) {
         }
     }
 
-    fun save(profile: Profile, goal: DailyGoal, date: LocalDate = LocalDate.now()) {
-        val history = load()?.goals.orEmpty().filterNot { it.date == date } + DatedGoal(date, goal)
+    fun save(profile: Profile, goal: DailyGoal?, date: LocalDate = LocalDate.now()) {
+        val previous = load()?.goals.orEmpty()
+        val history = if (goal == null) previous else previous.filterNot { it.date == date } + DatedGoal(date, goal)
         val goals = JSONArray()
         history.sortedBy { it.date }.forEach { dated ->
             val item = JSONObject()

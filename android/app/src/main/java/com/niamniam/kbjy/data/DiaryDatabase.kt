@@ -43,6 +43,7 @@ data class Food(
     val fatPer100: Double,
     val carbohydratePer100: Double,
     val defaultPortion: Double? = null,
+    @androidx.room.ColumnInfo(defaultValue = "0") val defaultIsDrink: Boolean = false,
 )
 
 @Entity(tableName = "food_barcodes")
@@ -68,6 +69,9 @@ interface DiaryDao {
     @Query("SELECT * FROM foods ORDER BY name COLLATE NOCASE")
     fun observeFoods(): Flow<List<Food>>
 
+    @Query("SELECT * FROM foods WHERE id = :id")
+    suspend fun findFood(id: Long): Food?
+
     @Insert
     suspend fun insertFood(food: Food): Long
 
@@ -88,7 +92,7 @@ interface DiaryDao {
     }
 }
 
-@Database(entities = [DiaryEntry::class, Food::class, RecipeRecord::class, RecipeIngredientRecord::class, FoodBarcode::class], version = 4, exportSchema = false)
+@Database(entities = [DiaryEntry::class, Food::class, RecipeRecord::class, RecipeIngredientRecord::class, FoodBarcode::class], version = 5, exportSchema = false)
 abstract class DiaryDatabase : RoomDatabase() {
     abstract fun diaryDao(): DiaryDao
     abstract fun recipeDao(): RecipeDao
@@ -112,13 +116,19 @@ abstract class DiaryDatabase : RoomDatabase() {
                 db.execSQL("ALTER TABLE foods ADD COLUMN defaultPortion REAL")
             }
         }
+        val migration4To5 = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE foods ADD COLUMN defaultIsDrink INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("UPDATE foods SET defaultIsDrink = 1 WHERE unit IN ('мл', 'ml')")
+            }
+        }
 
         fun get(context: Context): DiaryDatabase = instance ?: synchronized(this) {
             instance ?: Room.databaseBuilder(
                 context.applicationContext,
                 DiaryDatabase::class.java,
                 "diary.db",
-            ).addMigrations(migration1To2, migration2To3, migration3To4).build().also { instance = it }
+            ).addMigrations(migration1To2, migration2To3, migration3To4, migration4To5).build().also { instance = it }
         }
     }
 }

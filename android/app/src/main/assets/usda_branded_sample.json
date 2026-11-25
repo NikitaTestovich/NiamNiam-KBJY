@@ -1,0 +1,37 @@
+{
+  "source": "USDA FoodData Central, Global Branded Foods",
+  "sourceUrl": "https://fdc.nal.usda.gov/",
+  "license": "CC0-1.0",
+  "basis": "100 g, prepared product as packaged",
+  "retrievedDate": "2026-11-23",
+  "products": [
+    {
+      "fdcId": 2603771,
+      "code": "0797589001046",
+      "name": "Вареники с картофелем и луком (готовые)",
+      "nameEn": "POTATO AND ONION PIEROGI, POTATO; ONION",
+      "brand": "Delicious Fresh Pierogi",
+      "prepared": true,
+      "publicationDate": "7/13/2023",
+      "preparationReference": "https://www.freshdirect.com/deli_prepared/meals/meals_entrees/sc/meals_entrees_two_plus_pasta/p/hmr_pid_3777668",
+      "calories": 163.0,
+      "protein": 4.88,
+      "fat": 1.63,
+      "carbohydrate": 32.52
+    },
+    {
+      "fdcId": 2581795,
+      "code": "0797589001022",
+      "name": "Вареники с творогом (сладкие, готовые)",
+      "nameEn": "CHEESE PIEROGI, CHEESE",
+      "brand": "Delicious Fresh Pierogi",
+      "prepared": true,
+      "publicationDate": "6/29/2023",
+      "preparationReference": "https://www.wegmans.com/shop/product/180001-Cheese-Pierogi",
+      "calories": 163.0,
+      "protein": 7.32,
+      "fat": 2.85,
+      "carbohydrate": 27.64
+    }
+  ]
+}

@@ -1,0 +1,133 @@
+name: Publish Android release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_name:
+        description: Version name (for example 0.5)
+        required: true
+        type: string
+      version_code:
+        description: Increasing integer Android versionCode
+        required: true
+        type: string
+      confirm_publication:
+        description: Publish a stable APK to public GitHub Releases
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-release
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    if: inputs.confirm_publication
+    uses: ./.github/workflows/android.yml
+
+  publish:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    environment: release
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Validate release parameters and signing configuration
+        env:
+          VERSION_NAME: ${{ inputs.version_name }}
+          VERSION_CODE: ${{ inputs.version_code }}
+          SIGNING_KEYSTORE_BASE64: ${{ secrets.SIGNING_KEYSTORE_BASE64 }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$VERSION_NAME" =~ ^[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]
+          [[ "$VERSION_CODE" =~ ^[1-9][0-9]*$ ]]
+          test "$VERSION_CODE" -le 2100000000
+          test -n "$SIGNING_KEYSTORE_BASE64"
+          test -n "$SIGNING_STORE_PASSWORD"
+          test -n "$SIGNING_KEY_ALIAS"
+          test -n "$SIGNING_KEY_PASSWORD"
+          if gh release view "v$VERSION_NAME" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo 'This release already exists; choose a new version.' >&2
+            exit 1
+          fi
+          if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/v$VERSION_NAME" >/dev/null 2>&1; then
+            echo 'This tag already exists; choose a new version.' >&2
+            exit 1
+          fi
+          gh api --paginate --slurp "repos/$GITHUB_REPOSITORY/releases" > "$RUNNER_TEMP/releases.json"
+          python3 scripts/ci/release_signing.py previous "$RUNNER_TEMP/releases.json" "$VERSION_CODE" > "$RUNNER_TEMP/previous-release.txt"
+      - name: Install compile SDK
+        run: '"$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37.0"'
+      - name: Build release APK
+        working-directory: android
+        env:
+          VERSION_NAME: ${{ inputs.version_name }}
+          VERSION_CODE: ${{ inputs.version_code }}
+        run: bash ./gradlew :app:assembleRelease "-PappVersionName=$VERSION_NAME" "-PappVersionCode=$VERSION_CODE" --no-daemon
+      - name: Sign APK
+        env:
+          VERSION_CODE: ${{ inputs.version_code }}
+          SIGNING_KEYSTORE_BASE64: ${{ secrets.SIGNING_KEYSTORE_BASE64 }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          KEYSTORE_PATH="$RUNNER_TEMP/release.keystore"
+          trap 'rm -f "$KEYSTORE_PATH"' EXIT
+          printf '%s' "$SIGNING_KEYSTORE_BASE64" | base64 --decode > "$KEYSTORE_PATH"
+          BUILD_TOOLS=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)
+          mkdir -p release-artifacts
+          "$BUILD_TOOLS/zipalign" -P 16 -f 4 android/app/build/outputs/apk/release/app-release-unsigned.apk "$RUNNER_TEMP/aligned.apk"
+          APK="release-artifacts/niamniam-kbjy-vc$VERSION_CODE.apk"
+          "$BUILD_TOOLS/apksigner" sign --ks "$KEYSTORE_PATH" --ks-key-alias "$SIGNING_KEY_ALIAS" --ks-pass env:SIGNING_STORE_PASSWORD --key-pass env:SIGNING_KEY_PASSWORD --v4-signing-enabled false --out "$APK" "$RUNNER_TEMP/aligned.apk"
+      - name: Verify the signed release APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION_NAME: ${{ inputs.version_name }}
+          VERSION_CODE: ${{ inputs.version_code }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          BUILD_TOOLS=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)
+          APK="release-artifacts/niamniam-kbjy-vc$VERSION_CODE.apk"
+          "$BUILD_TOOLS/zipalign" -c -P 16 4 "$APK"
+          "$BUILD_TOOLS/apksigner" verify --verbose --print-certs "$APK" > "$RUNNER_TEMP/current-signers.txt"
+          python3 scripts/ci/verify_release_apk.py "$APK" --aapt2 "$BUILD_TOOLS/aapt2" --version-name "$VERSION_NAME" --version-code "$VERSION_CODE"
+          previous_report=()
+          if [ -s "$RUNNER_TEMP/previous-release.txt" ]; then
+            read -r PREVIOUS_CODE PREVIOUS_ASSET_ID < "$RUNNER_TEMP/previous-release.txt"
+            PREVIOUS_APK="$RUNNER_TEMP/niamniam-kbjy-vc$PREVIOUS_CODE.apk"
+            gh api --header 'Accept: application/octet-stream' "repos/$GITHUB_REPOSITORY/releases/assets/$PREVIOUS_ASSET_ID" > "$PREVIOUS_APK"
+            "$BUILD_TOOLS/apksigner" verify --verbose --print-certs "$PREVIOUS_APK" > "$RUNNER_TEMP/previous-signers.txt"
+            previous_report=("$RUNNER_TEMP/previous-signers.txt")
+          fi
+          python3 scripts/ci/release_signing.py verify "$RUNNER_TEMP/current-signers.txt" "${previous_report[@]}"
+          (cd release-artifacts && sha256sum "niamniam-kbjy-vc$VERSION_CODE.apk" > SHA256SUMS)
+      - name: Publish stable release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION_NAME: ${{ inputs.version_name }}
+          VERSION_CODE: ${{ inputs.version_code }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release create "v$VERSION_NAME" "release-artifacts/niamniam-kbjy-vc$VERSION_CODE.apk" release-artifacts/SHA256SUMS --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "NiamNiam KBJY $VERSION_NAME" --generate-notes

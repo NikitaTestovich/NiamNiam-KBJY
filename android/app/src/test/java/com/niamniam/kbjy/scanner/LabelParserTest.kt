@@ -15,9 +15,50 @@ class LabelParserTest {
     }
 
     @Test fun doesNotTreatKilojoulesAsKilocaloriesOrGuessColumns() {
-        val result = LabelParser.parse("на 100 мл на порцию\nЭнергия 500 кДж 120 ккал 60 ккал\nБелки 2 г 1 г")
-        assertNull(result.basis)
+        val result = LabelParser.parse("на 100 мл на порцию\nЭнергия 500 кДж 60 ккал\nБелки 1 г")
+        assertEquals(LabelBasis.PER_100_MILLILITERS, result.basis)
         assertNull(result.calories)
+        assertNull(result.protein)
+    }
+
+    @Test fun readsPer100GramsFromTheFirstColumnAndIgnoresKilojoules() {
+        val result = LabelParser.parse(
+            """
+            На 100 г     На порцию 50 г
+            Энергия 840 кДж 200 ккал     420 кДж 100 ккал
+            Белки 10 г     5 г
+            Жиры 3,2 г     1,6 г
+            Углеводы 20 г     10 г
+            """.trimIndent()
+        )
+        assertEquals(ParsedLabel(LabelBasis.PER_100_GRAMS, 200.0, 10.0, 3.2, 20.0), result)
+    }
+
+    @Test fun readsPer100MillilitersFromTheSecondColumnAndSkipsAnIncompleteRow() {
+        val result = LabelParser.parse(
+            """
+            Per serving (200 ml)  __—sPer 100 ml
+            Energy 90 kcal    45 kcal
+            Protein 1 g    0.5 g
+            Fat 0.1 g
+            Carbohydrates 20 g    10 g
+            """.trimIndent()
+        )
+        assertEquals(ParsedLabel(LabelBasis.PER_100_MILLILITERS, 45.0, 0.5, null, 10.0), result)
+    }
+
+    @Test fun doesNotReadColumnsWhenHeadersAreOnDifferentLinesOrRepeat() {
+        for (header in listOf("Per 100 g\nPer serving", "Per 100 g  Per serving  Per serving", "Per 100 g  Per 100 ml")) {
+            val result = LabelParser.parse("$header\nEnergy 200 kcal 100 kcal\nProtein 10 g 5 g")
+            assertNull(result.basis)
+            assertNull(result.calories)
+        }
+    }
+
+    @Test fun ignoresANonFiniteAmountWithoutShiftingToTheServingColumn() {
+        val huge = "9".repeat(400)
+        val result = LabelParser.parse("Per 100 g  Per serving\nEnergy 200 kcal 100 kcal\nProtein $huge g 5 g")
+        assertEquals(200.0, result.calories)
         assertNull(result.protein)
     }
 

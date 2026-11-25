@@ -1,0 +1,1281 @@
+[
+  {
+    "id": "bread-with-butter",
+    "nameRu": "Бутерброд с маслом (белый хлеб)",
+    "nameEn": "White bread with butter",
+    "ingredients": [
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2707600,
+        "grams": 40
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2710155,
+        "grams": 10
+      }
+    ]
+  },
+  {
+    "id": "buckwheat-butter",
+    "nameRu": "Каша гречневая с маслом сливочным",
+    "nameEn": "Buckwheat porridge with butter",
+    "ingredients": [
+      {
+        "source": "USDA SR28",
+        "id": 20010,
+        "grams": 150
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2710155,
+        "grams": 10
+      }
+    ]
+  },
+  {
+    "id": "buckwheat-mushrooms",
+    "nameRu": "Гречка с грибами и луком",
+    "nameEn": "Buckwheat with mushrooms and onion",
+    "ingredients": [
+      {
+        "source": "USDA SR28",
+        "id": 20010,
+        "grams": 150
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709941,
+        "grams": 60
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709950,
+        "grams": 20
+      }
+    ]
+  },
+  {
+    "id": "beet-garlic-salad",
+    "nameRu": "Салат из свёклы с чесноком и подсолнечным маслом",
+    "nameEn": "Beetroot salad with garlic and sunflower oil",
+    "ingredients": [
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709872,
+        "grams": 150
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709786,
+        "grams": 4
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2710192,
+        "grams": 8
+      }
+    ]
+  },
+  {
+    "id": "bulgur-vegetables",
+    "nameRu": "Булгур с овощами (морковь, сладкий перец и лук)",
+    "nameEn": "Bulgur with carrot, sweet pepper and onion",
+    "ingredients": [
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2708438,
+        "grams": 150
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2710793,
+        "grams": 40
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2710799,
+        "grams": 40
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709950,
+        "grams": 20
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2710192,
+        "grams": 5
+      }
+    ]
+  },
+  {
+    "id": "spinach-pkhali",
+    "nameRu": "Пхали из шпината с грецкими орехами",
+    "nameEn": "Spinach pkhali with walnuts",
+    "ingredients": [
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709615,
+        "grams": 120
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2707531,
+        "grams": 35
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709786,
+        "grams": 3
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709782,
+        "grams": 8
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709351,
+        "grams": 5
+      }
+    ]
+  },
+  {
+    "id": "eggplant-walnut-rolls",
+    "nameRu": "Баклажаны с орехами (рулетики из запечённых баклажанов)",
+    "nameEn": "Baked eggplant rolls with walnuts",
+    "ingredients": [
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709929,
+        "grams": 120
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2707531,
+        "grams": 35
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709786,
+        "grams": 3
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709782,
+        "grams": 8
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709351,
+        "grams": 5
+      }
+    ]
+  },
+  {
+    "id": "okroshka-kefir",
+    "nameRu": "Окрошка на кефире с варёной колбасой",
+    "nameEn": "Okroshka with kefir and cooked sausage",
+    "ingredients": [
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2705394,
+        "grams": 130
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2710707,
+        "grams": 30
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709388,
+        "grams": 45
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709784,
+        "grams": 25
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709803,
+        "grams": 15
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2706176,
+        "grams": 25
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2707154,
+        "grams": 25
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709796,
+        "grams": 5
+      }
+    ]
+  },
+  {
+    "id": "cold-beet-soup",
+    "nameRu": "Свекольник холодный на сметане с яйцом",
+    "nameEn": "Cold beet soup with sour cream and egg",
+    "ingredients": [
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709872,
+        "grams": 85
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2710707,
+        "grams": 80
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2705614,
+        "grams": 40
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709784,
+        "grams": 50
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2707154,
+        "grams": 35
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709796,
+        "grams": 5
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709181,
+        "grams": 5
+      }
+    ]
+  },
+  {
+    "id": "olivier-cooked-sausage",
+    "nameRu": "Салат оливье с колбасой и зелёным горошком",
+    "nameEn": "Olivier salad with cooked sausage and green peas",
+    "ingredients": [
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709388,
+        "grams": 60
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709664,
+        "grams": 35
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2706176,
+        "grams": 45
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2707154,
+        "grams": 35
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709961,
+        "grams": 30
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2710078,
+        "grams": 25
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2710204,
+        "grams": 20
+      }
+    ]
+  },
+  {
+    "id": "layered-herring",
+    "nameRu": "Селёдка под шубой с маринованной сельдью",
+    "nameEn": "Layered beet and potato salad with pickled herring",
+    "ingredients": [
+      {
+        "source": "USDA SR28",
+        "id": 15041,
+        "grams": 55
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709872,
+        "grams": 65
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709388,
+        "grams": 55
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709664,
+        "grams": 40
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709795,
+        "grams": 10
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2710204,
+        "grams": 25
+      }
+    ]
+  },
+  {
+    "id": "red-kidney-lobio",
+    "nameRu": "Лобио из красной фасоли с грецкими орехами",
+    "nameEn": "Red kidney bean lobio with walnuts",
+    "ingredients": [
+      {
+        "source": "USDA SR28",
+        "id": 16033,
+        "grams": 175
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709950,
+        "grams": 27
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2707531,
+        "grams": 28
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709786,
+        "grams": 3
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709782,
+        "grams": 7
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709351,
+        "grams": 5
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2710192,
+        "grams": 5
+      }
+    ]
+  },
+  {
+    "id": "lean-borscht",
+    "nameRu": "Борщ постный на овощном бульоне",
+    "nameEn": "Meatless borscht with vegetable broth",
+    "ingredients": [
+      {
+        "source": "USDA SR28",
+        "id": 6700,
+        "grams": 145
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709872,
+        "grams": 55
+      },
+      {
+        "source": "USDA SR28",
+        "id": 11110,
+        "grams": 30
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709388,
+        "grams": 30
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709664,
+        "grams": 15
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709950,
+        "grams": 10
+      },
+      {
+        "source": "USDA SR28",
+        "id": 11546,
+        "grams": 8
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2710192,
+        "grams": 5
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709786,
+        "grams": 2
+      }
+    ]
+  },
+  {
+    "id": "sauerkraut-shchi",
+    "nameRu": "Щи из квашеной капусты с говядиной",
+    "nameEn": "Sauerkraut shchi with beef",
+    "ingredients": [
+      {
+        "source": "USDA SR28",
+        "id": 6188,
+        "grams": 150
+      },
+      {
+        "source": "USDA SR28",
+        "id": 11439,
+        "grams": 65
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709388,
+        "grams": 40
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2705849,
+        "grams": 25
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709664,
+        "grams": 10
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709950,
+        "grams": 8
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2710192,
+        "grams": 2
+      }
+    ]
+  },
+  {
+    "id": "meat-solyanka",
+    "nameRu": "Солянка мясная с говядиной и колбасой",
+    "nameEn": "Meat solyanka with beef and cooked sausage",
+    "ingredients": [
+      {
+        "source": "USDA SR28",
+        "id": 6188,
+        "grams": 160
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2705849,
+        "grams": 45
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2706176,
+        "grams": 35
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2710078,
+        "grams": 20
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709950,
+        "grams": 12
+      },
+      {
+        "source": "USDA SR28",
+        "id": 11546,
+        "grams": 10
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2710090,
+        "grams": 10
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709168,
+        "grams": 5
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2710192,
+        "grams": 3
+      }
+    ]
+  },
+  {
+    "id": "barley-rassolnik",
+    "nameRu": "Рассольник с перловкой и курицей",
+    "nameEn": "Rassolnik with pearl barley and chicken",
+    "ingredients": [
+      {
+        "source": "USDA SR28",
+        "id": 6194,
+        "grams": 150
+      },
+      {
+        "source": "USDA SR28",
+        "id": 20006,
+        "grams": 35
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709388,
+        "grams": 35
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2710078,
+        "grams": 25
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2705966,
+        "grams": 25
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709664,
+        "grams": 15
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709950,
+        "grams": 12
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2710192,
+        "grams": 3
+      }
+    ]
+  },
+  {
+    "id": "cod-ukha",
+    "nameRu": "Уха из трески на рыбном бульоне",
+    "nameEn": "Cod ukha with fish broth",
+    "ingredients": [
+      {
+        "source": "USDA SR28",
+        "id": 6963,
+        "grams": 160
+      },
+      {
+        "source": "USDA SR28",
+        "id": 15016,
+        "grams": 80
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709388,
+        "grams": 35
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709664,
+        "grams": 15
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709950,
+        "grams": 8
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709796,
+        "grams": 2
+      }
+    ]
+  },
+  {
+    "id": "navy-style-pasta",
+    "nameRu": "Макароны по-флотски с говяжьим фаршем",
+    "nameEn": "Navy-style pasta with ground beef",
+    "ingredients": [
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2708357,
+        "grams": 150
+      },
+      {
+        "source": "USDA SR28",
+        "id": 23570,
+        "grams": 80
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709950,
+        "grams": 20
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2710192,
+        "grams": 5
+      }
+    ]
+  },
+  {
+    "id": "chicken-satsivi",
+    "nameRu": "Сациви из курицы с грецкими орехами",
+    "nameEn": "Chicken satsivi with walnuts",
+    "ingredients": [
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2705966,
+        "grams": 110
+      },
+      {
+        "source": "USDA SR28",
+        "id": 6194,
+        "grams": 65
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2707531,
+        "grams": 40
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709950,
+        "grams": 21
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709786,
+        "grams": 4
+      },
+      {
+        "source": "USDA SR28",
+        "id": 4528,
+        "grams": 4
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709351,
+        "grams": 4
+      },
+      {
+        "source": "USDA SR28",
+        "id": 2013,
+        "grams": 1
+      },
+      {
+        "source": "USDA SR28",
+        "id": 2019,
+        "grams": 1
+      }
+    ]
+  },
+  {
+    "id": "vegetable-ajapsandali",
+    "nameRu": "Аджапсандали с баклажанами и сладким перцем",
+    "nameEn": "Ajapsandali with eggplant and sweet pepper",
+    "ingredients": [
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709929,
+        "grams": 110
+      },
+      {
+        "source": "USDA SR28",
+        "id": 11530,
+        "grams": 50
+      },
+      {
+        "source": "USDA SR28",
+        "id": 11823,
+        "grams": 40
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709950,
+        "grams": 25
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2710192,
+        "grams": 15
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709786,
+        "grams": 4
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709782,
+        "grams": 4
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709780,
+        "grams": 2
+      }
+    ]
+  },
+  {
+    "id": "mushroom-risotto",
+    "nameRu": "Ризотто с грибами на овощном бульоне",
+    "nameEn": "Mushroom risotto with vegetable stock",
+    "ingredients": [
+      {
+        "source": "BLS 4.0",
+        "id": "X850123",
+        "grams": 170
+      },
+      {
+        "source": "BLS 4.0",
+        "id": "K701182",
+        "grams": 60
+      }
+    ]
+  },
+  {
+    "id": "chicken-chakhokhbili",
+    "nameRu": "Чахохбили из курицы с помидорами и кинзой",
+    "nameEn": "Chicken chakhokhbili with tomatoes and cilantro",
+    "ingredients": [
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2706037,
+        "grams": 120
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2710795,
+        "grams": 95
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709950,
+        "grams": 35
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709786,
+        "grams": 3
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709782,
+        "grams": 5
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709780,
+        "grams": 2
+      }
+    ]
+  },
+  {
+    "id": "pork-ojakhuri",
+    "nameRu": "Оджахури со свининой и жареным картофелем",
+    "nameEn": "Pork ojakhuri with fried potatoes",
+    "ingredients": [
+      {
+        "source": "USDA SR28",
+        "id": 10178,
+        "grams": 100
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709474,
+        "grams": 130
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709950,
+        "grams": 30
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709786,
+        "grams": 4
+      },
+      {
+        "source": "USDA FNDDS 2021–2023",
+        "id": 2709782,
+        "grams": 6
+      }
+    ]
+  },
+  {
+    "id": "milk-omelette",
+    "nameRu": "Омлет из яиц с молоком (запечённый)",
+    "nameEn": "Baked egg omelette with milk",
+    "cookedYield": {
+      "grams": 100,
+      "reference": "Карта 5001.1",
+      "sourceUrl": "https://gnessinka.ru/upload/iblock/500/9yplh4olrdywlw9zkzel5b4kve0sk1fd/Kachestv_khar_Menyu_SHKOLY_1var_2_-_1_compressed.pdf"
+    },
+    "ingredients": [
+      {
+        "id": 1123,
+        "grams": 75,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 1211,
+        "grams": 30,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 2047,
+        "grams": 0.25,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 1145,
+        "grams": 2,
+        "source": "USDA SR28"
+      }
+    ]
+  },
+  {
+    "id": "baked-syrniki",
+    "nameRu": "Сырники запечённые из творога с манкой",
+    "nameEn": "Baked quark syrniki with semolina",
+    "cookedYield": {
+      "grams": 100,
+      "reference": "Карта «Сырники из творога запеченные»",
+      "sourceUrl": "https://socpitanie.spb.ru/static/single/-rus-common-usp-bibliotek-/staticmaterial41995_18514/"
+    },
+    "ingredients": [
+      {
+        "id": "M713300",
+        "grams": 90,
+        "source": "BLS 4.0"
+      },
+      {
+        "id": "M111300",
+        "grams": 8,
+        "source": "BLS 4.0"
+      },
+      {
+        "id": "Q630000",
+        "grams": 3,
+        "source": "BLS 4.0"
+      },
+      {
+        "id": "C218000",
+        "grams": 8,
+        "source": "BLS 4.0"
+      },
+      {
+        "id": "E111100",
+        "grams": 4,
+        "source": "BLS 4.0"
+      },
+      {
+        "id": "S111000",
+        "grams": 8,
+        "source": "BLS 4.0"
+      },
+      {
+        "id": "R111000",
+        "grams": 1,
+        "source": "BLS 4.0"
+      },
+      {
+        "id": "C214100",
+        "grams": 8,
+        "source": "BLS 4.0"
+      },
+      {
+        "id": "M172500",
+        "grams": 3,
+        "source": "BLS 4.0"
+      }
+    ]
+  },
+  {
+    "id": "chicken-pilaf",
+    "nameRu": "Плов с курицей (с морковью и томатным пюре)",
+    "nameEn": "Chicken pilaf with carrot and tomato puree",
+    "cookedYield": {
+      "grams": 150,
+      "reference": "Карта 54-12м-2020",
+      "sourceUrl": "https://mbdou181.ru/data/documents/Sbornik.pdf"
+    },
+    "ingredients": [
+      {
+        "id": 5062,
+        "grams": 80,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 20444,
+        "grams": 34,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 11547,
+        "grams": 8,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 2709795,
+        "grams": 5,
+        "source": "USDA FNDDS 2021–2023"
+      },
+      {
+        "id": 2709660,
+        "grams": 8,
+        "source": "USDA FNDDS 2021–2023"
+      },
+      {
+        "id": 2710192,
+        "grams": 5,
+        "source": "USDA FNDDS 2021–2023"
+      },
+      {
+        "id": 2047,
+        "grams": 0.3,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 2710707,
+        "grams": 136.1,
+        "source": "USDA FNDDS 2021–2023"
+      }
+    ]
+  },
+  {
+    "id": "baked-cabbage-pie",
+    "nameRu": "Пирожок печёный с капустой и яйцом",
+    "nameEn": "Baked cabbage and egg hand pie",
+    "cookedYield": {
+      "grams": 50,
+      "reference": "Карта 451",
+      "sourceUrl": "https://dou41spb.ru/files/catering/Catering_%D0%A2%D0%9A_Menu1-3.pdf"
+    },
+    "ingredients": [
+      {
+        "id": 20081,
+        "grams": 21.3,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 19335,
+        "grams": 1.4,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 1145,
+        "grams": 0.6,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 2047,
+        "grams": 0.6,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 18375,
+        "grams": 0.6,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 2710707,
+        "grams": 9.6,
+        "source": "USDA FNDDS 2021–2023"
+      },
+      {
+        "id": 11109,
+        "grams": 30.2,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 2710192,
+        "grams": 2.5,
+        "source": "USDA FNDDS 2021–2023"
+      },
+      {
+        "id": 1123,
+        "grams": 2.5,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 2709796,
+        "grams": 0.3,
+        "source": "USDA FNDDS 2021–2023"
+      }
+    ]
+  },
+  {
+    "id": "cherry-vareniki",
+    "nameRu": "Вареники с вишней (отварные со сливочным маслом)",
+    "nameEn": "Boiled sour cherry vareniki with butter",
+    "cookedYield": {
+      "grams": 100,
+      "reference": "Карты 997, 996, 1014 и 1257",
+      "sourceUrl": "https://appsro.ru/files/files/1/Sbornik%203.pdf"
+    },
+    "ingredients": [
+      {
+        "id": 20081,
+        "grams": 28.93,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 1123,
+        "grams": 2.21,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 2047,
+        "grams": 0.5,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 9068,
+        "grams": 41.21,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 19335,
+        "grams": 9.67,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 1145,
+        "grams": 5,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 2710707,
+        "grams": 10.2,
+        "source": "USDA FNDDS 2021–2023"
+      }
+    ]
+  },
+  {
+    "id": "beef-pelmeni",
+    "nameRu": "Пельмени с говядиной (отварные со сливочным маслом)",
+    "nameEn": "Boiled beef pelmeni with butter",
+    "cookedYield": {
+      "grams": 100,
+      "reference": "Карты 1011, 1014 и 1015",
+      "sourceUrl": "https://appsro.ru/files/files/1/Sbornik%203.pdf"
+    },
+    "ingredients": [
+      {
+        "id": 20081,
+        "grams": 25.02,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 1123,
+        "grams": 1.91,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 2047,
+        "grams": 1.15,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 23562,
+        "grams": 34.4,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 11282,
+        "grams": 3.36,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 1145,
+        "grams": 1.5,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 2710707,
+        "grams": 15.22,
+        "source": "USDA FNDDS 2021–2023"
+      }
+    ]
+  },
+  {
+    "id": "baked-potato-pie",
+    "nameRu": "Пирожок печёный с картофелем и луком",
+    "nameEn": "Baked potato and onion hand pie",
+    "cookedYield": {
+      "grams": 70,
+      "reference": "Карта 45 детского сада №350, Самара",
+      "sourceUrl": "https://350ds.ru/images/dist/pages/pitanie/pirozhki-pechenye-s-kartoshkoi-161123.pdf"
+    },
+    "ingredients": [
+      {
+        "id": 20081,
+        "grams": 29.43,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 19335,
+        "grams": 2,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 1145,
+        "grams": 0.9,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 2047,
+        "grams": 0.7,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 18375,
+        "grams": 0.9,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 11352,
+        "grams": 27.2,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 11282,
+        "grams": 7.9,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 1123,
+        "grams": 1.61,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 2710707,
+        "grams": 13.1,
+        "source": "USDA FNDDS 2021–2023"
+      },
+      {
+        "id": 2710192,
+        "grams": 0.35,
+        "source": "USDA FNDDS 2021–2023"
+      }
+    ]
+  },
+  {
+    "id": "apple-charlotte",
+    "nameRu": "Шарлотка с яблоками (бисквитная с сахарной пудрой)",
+    "nameEn": "Apple sponge charlotte with powdered sugar",
+    "cookedYield": {
+      "grams": 700,
+      "reference": "Классическая шарлотка, карта О. В. Филипповой",
+      "sourceUrl": "https://infourok.ru/tehnologicheskaya-karta-k-uroku-uchebnoj-praktiki-po-teme-klassicheskaya-sharlotka-6273174.html"
+    },
+    "ingredients": [
+      {
+        "id": 1123,
+        "grams": 80,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 20081,
+        "grams": 90,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 19335,
+        "grams": 66.5,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 9004,
+        "grams": 500,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 1145,
+        "grams": 25,
+        "source": "USDA SR28"
+      }
+    ]
+  },
+  {
+    "id": "chicken-chikhirtma",
+    "nameRu": "Чихиртма (куриный суп с яичным желтком)",
+    "nameEn": "Chicken chikhirtma with egg yolk",
+    "cookedYield": {
+      "grams": 550,
+      "reference": "С. У. Месропян, рецепт №15, с. 11",
+      "sourceUrl": "https://djvu.online/file/NLRSm5vO7MBMY"
+    },
+    "ingredients": [
+      {
+        "id": 5011,
+        "grams": 128,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 1145,
+        "grams": 10,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 11282,
+        "grams": 16,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 20081,
+        "grams": 5,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 11297,
+        "grams": 3,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 1125,
+        "grams": 4.25,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 2068,
+        "grams": 5,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 2030,
+        "grams": 0.05,
+        "source": "USDA SR28"
+      },
+      {
+        "id": 2047,
+        "grams": 6,
+        "source": "USDA SR28"
+      }
+    ]
+  }
+]

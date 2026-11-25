@@ -1,0 +1,101 @@
+{
+  "source": "Public Health England · McCance and Widdowson's Composition of Foods Integrated Dataset 2021",
+  "sourceUrl": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+  "sourceSha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+  "license": "OGL-UK-3.0",
+  "licenseUrl": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+  "basis": "100 g",
+  "changes": "Selected dishes and nutrient fields; Russian translations added.",
+  "foods": [
+    {
+      "id": "11-735",
+      "nameRu": "Спагетти с томатным соусом (консервированные)",
+      "nameEn": "Pasta, spaghetti, canned, in tomato sauce",
+      "prepared": true,
+      "calories": 72.0,
+      "protein": 2.1,
+      "fat": 0.3,
+      "carbohydrate": 16.2
+    },
+    {
+      "id": "19-628",
+      "nameRu": "Спагетти болоньезе домашние",
+      "nameEn": "Spaghetti bolognese, homemade",
+      "prepared": true,
+      "calories": 151.0,
+      "protein": 8.1,
+      "fat": 6.1,
+      "carbohydrate": 17.2
+    },
+    {
+      "id": "19-566",
+      "nameRu": "Ризотто с курицей домашнее",
+      "nameEn": "Risotto, chicken, homemade",
+      "prepared": true,
+      "calories": 173.0,
+      "protein": 8.9,
+      "fat": 3.3,
+      "carbohydrate": 25.3
+    },
+    {
+      "id": "11-999",
+      "nameRu": "Ризотто без наполнителя домашнее",
+      "nameEn": "Risotto, plain, homemade",
+      "prepared": true,
+      "calories": 184.0,
+      "protein": 3.3,
+      "fat": 4.7,
+      "carbohydrate": 35.6
+    },
+    {
+      "id": "15-863",
+      "nameRu": "Ризотто из белого риса с овощами, фасолью и кешью",
+      "nameEn": "Risotto, white rice, vegetable, homemade",
+      "prepared": true,
+      "calories": 139.0,
+      "protein": 3.8,
+      "fat": 6.1,
+      "carbohydrate": 18.5
+    },
+    {
+      "id": "15-885",
+      "nameRu": "Салат табуле с булгуром",
+      "nameEn": "Tabouleh",
+      "prepared": true,
+      "calories": 119.0,
+      "protein": 2.6,
+      "fat": 4.6,
+      "carbohydrate": 17.2
+    },
+    {
+      "id": "19-596",
+      "nameRu": "Самоса с бараниной, запечённая",
+      "nameEn": "Samosas, lamb, baked, homemade",
+      "prepared": true,
+      "calories": 288.0,
+      "protein": 11.1,
+      "fat": 17.5,
+      "carbohydrate": 23.1
+    },
+    {
+      "id": "19-551",
+      "nameRu": "Бефстроганов домашний",
+      "nameEn": "Beef Stroganoff, homemade",
+      "prepared": true,
+      "calories": 171.0,
+      "protein": 15.3,
+      "fat": 11.2,
+      "carbohydrate": 2.5
+    },
+    {
+      "id": "11-730",
+      "nameRu": "Свежая яичная паста с грибной начинкой, варёная",
+      "nameEn": "Pasta, egg, fresh, filled with mushrooms, boiled in unsalted water",
+      "prepared": true,
+      "calories": 173.0,
+      "protein": 8.1,
+      "fat": 4.3,
+      "carbohydrate": 27.1
+    }
+  ]
+}

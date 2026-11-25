@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NiamNiam · Макет главной</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f7f8fc;
+      --ink: #191f2b;
+      --muted: #454e61;
+      --blue: #234c96;
+      --amber: #9a4d0c;
+      --green: #376c31;
+      --error: #aa2234;
+      --outline: #727d94;
+      --tint: #dee5f5;
+      font: 16px Roboto, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #e7ecf7; color: var(--ink); }
+    .preview { width: min(100%, 412px); margin: 20px auto; }
+    .device {
+      background: var(--paper);
+      border: 1px solid #c6cfe2;
+      border-radius: 24px;
+      overflow: hidden;
+    }
+    main { padding: 20px 18px 14px; }
+    .today { margin: 0 auto; width: fit-content; padding: 6px 13px; border-radius: 18px; background: var(--tint); color: #263653; font-size: .875rem; font-weight: 600; }
+    .calories { display: grid; justify-items: center; margin: 16px 0 20px; }
+    .ring { width: 144px; height: 144px; border: 1px solid var(--outline); border-radius: 50%; display: grid; place-items: center; background: conic-gradient(var(--blue) var(--calorie-progress, 88.33%), #dfe6f4 0); }
+    .ring-inner { width: 121px; height: 121px; border-radius: 50%; display: grid; place-content: center; text-align: center; background: var(--paper); }
+    .ring-inner strong { color: var(--blue); font-size: 2.15rem; line-height: 1.05; font-weight: 600; }
+    .ring-inner span { font-size: .86rem; }
+    .calorie-legend { margin: 9px 0 0; font-size: 1.14rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .macros { display: grid; grid-template-columns: minmax(82px, 36%) minmax(0, 1fr); gap: 15px; align-items: center; padding: 13px 0; border-block: 1px solid #dce3f0; }
+    canvas { width: 100%; height: auto; }
+    .legend { margin: 0; }
+    .macro { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: baseline; gap: 4px 7px; padding: 6px 0; font-size: .875rem; }
+    .macro + .macro { border-top: 1px solid #e3e8f2; }
+    .macro dt { display: contents; }
+    .macro dt::before { content: ""; width: 8px; height: 8px; align-self: center; background: var(--color); border-radius: 50%; }
+    .macro dd { margin: 0; }
+    .amount { white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .amount span { color: var(--muted); }
+    .status { grid-column: 2 / -1; color: var(--muted); font-size: .75rem; }
+    .status.over { color: var(--error); font-weight: 600; }
+    .fluid { margin: 15px 0 13px; }
+    .fluid h2, .meal h2 { font-size: 1rem; margin: 0; font-weight: 600; }
+    .fluid canvas { display: block; height: 42px; margin-top: 4px; }
+    .action, .nav-item, .controls button { font: inherit; color: #263653; border-radius: 20px; background: var(--tint); padding: 7px 12px; font-weight: 600; }
+    .actions { display: flex; gap: 8px; }
+    .action { flex: 1; text-align: center; font-size: .875rem; }
+    .meal { margin-top: 15px; padding: 13px 14px; border-radius: 13px; background: #edf1f8; }
+    .meal p { font-size: .875rem; margin: 5px 0 0; color: var(--muted); }
+    nav { display: flex; gap: 8px; background: #e7ecf7; padding: 8px 12px; }
+    .nav-item { flex: 1; text-align: center; }
+    .controls { padding: 10px 0 3px; text-align: center; }
+    .controls button { border: 1px solid var(--outline); cursor: pointer; font-size: .875rem; min-height: 40px; }
+    .controls button[aria-pressed="true"] { background: var(--blue); color: white; border-color: var(--blue); }
+    .controls button:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+    @media (max-width: 370px) {
+      .preview { margin-top: 0; }
+      .device { border-radius: 0; }
+      main { padding-inline: 13px; }
+      .macros { grid-template-columns: minmax(78px, 31%) minmax(0, 1fr); gap: 9px; }
+      .macro { gap: 3px 5px; }
+    }
+    @media (max-width: 310px) {
+      .macro .amount { grid-column: 2; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Локальный макет варианта Б. Синтетические данные. -->
+  <div class="preview">
+    <div class="device">
+      <main>
+        <p class="today">вторник, 24 ноября</p>
+        <div class="calories">
+          <div class="ring"><div class="ring-inner"><strong id="remaining">245</strong><span>ккал осталось</span></div></div>
+          <p class="calorie-legend"><span id="consumed">1 855</span> / 2 100 ккал</p>
+        </div>
+        <section class="macros" aria-label="Белки, жиры и углеводы">
+          <canvas id="plate" width="320" height="320" aria-hidden="true"></canvas>
+          <dl class="legend">
+            <div class="macro" style="--color:var(--blue)"><dt>Белки</dt><dd class="amount"><strong>105</strong><span> / 120 г</span></dd><dd class="status">Осталось 15 г</dd></div>
+            <div class="macro" style="--color:var(--amber)"><dt>Жиры</dt><dd class="amount"><strong id="fat">75</strong><span> / 70 г</span></dd><dd id="fat-status" class="status over">На 5 г выше цели</dd></div>
+            <div class="macro" style="--color:var(--green)"><dt>Углеводы</dt><dd class="amount"><strong>190</strong><span> / 240 г</span></dd><dd class="status">Осталось 50 г</dd></div>
+          </dl>
+        </section>
+        <section class="fluid" aria-label="Жидкость">
+          <h2>Жидкость · 500 / 2 000 мл</h2>
+          <canvas id="river" width="750" height="84" aria-hidden="true"></canvas>
+        </section>
+        <div class="actions"><span class="action">Добавить воду</span><span class="action">Мои блюда</span></div>
+        <section class="meal"><h2>Обед</h2><p>Рис варёный, куриное бедро, салат из морской капусты</p></section>
+      </main>
+      <nav aria-label="Навигация"><span class="nav-item">Настройки</span><span class="nav-item">История</span></nav>
+    </div>
+    <div class="controls" aria-label="Состояния макета">
+      <button type="button" data-fat="65" aria-pressed="false">В пределах цели</button>
+      <button type="button" data-fat="75" aria-pressed="true">С превышением</button>
+    </div>
+  </div>
+  <script>
+    const plate = document.querySelector('#plate').getContext('2d');
+
+    function drawPlate(fat) {
+      plate.clearRect(0, 0, 320, 320);
+      plate.beginPath();
+      plate.arc(160, 160, 153, 0, Math.PI * 2);
+      plate.fillStyle = '#e7ecf7';
+      plate.fill();
+      plate.lineWidth = 2;
+      plate.strokeStyle = '#727d94';
+      plate.stroke();
+      [
+        [105 / 120, '#234c96', '#bdcae4'],
+        [fat / 70, '#9a4d0c', '#e8d5c7'],
+        [190 / 240, '#376c31', '#c7d8cd']
+      ].forEach(([fraction, fill, background], index) => {
+        const angle = (-88 + index * 120) * Math.PI / 180;
+        const width = 116 * Math.PI / 180;
+        const wedge = (end, color) => {
+          plate.beginPath();
+          plate.moveTo(160, 160);
+          plate.arc(160, 160, 131, angle, end);
+          plate.closePath();
+          plate.fillStyle = color;
+          plate.fill();
+        };
+        wedge(angle + width, background);
+        wedge(angle + width * Math.min(fraction, 1), fill);
+        if (fraction > 1) {
+          plate.beginPath();
+          plate.arc(160, 160, 142, angle, angle + width);
+          plate.lineWidth = 5;
+          plate.strokeStyle = '#aa2234';
+          plate.stroke();
+        }
+      });
+    }
+
+    const river = document.querySelector('#river').getContext('2d');
+    const channels = new Path2D('M18 54 C102 8 162 32 254 54 S411 78 495 45 S630 24 732 43 M94 72 Q135 71 161 35 M224 17 Q306 12 380 69 M581 13 Q633 14 658 31');
+    river.lineCap = 'round';
+    river.lineWidth = 25;
+    river.strokeStyle = '#c9dbd5';
+    river.stroke(channels);
+    river.lineWidth = 17;
+    river.strokeStyle = '#e3e9f4';
+    river.stroke(channels);
+    river.save();
+    river.beginPath();
+    river.rect(0, 0, 188, 84);
+    river.clip();
+    river.strokeStyle = '#187da0';
+    river.stroke(channels);
+    river.restore();
+
+    const controls = [...document.querySelectorAll('[data-fat]')];
+    function show(fat) {
+      const calories = 1180 + fat * 9;
+      const difference = Math.abs(70 - fat);
+      document.querySelector('.ring').style.setProperty('--calorie-progress', `${calories / 21}%`);
+      document.querySelector('#remaining').textContent = 2100 - calories;
+      document.querySelector('#consumed').textContent = new Intl.NumberFormat('ru-RU').format(calories);
+      document.querySelector('#fat').textContent = fat;
+      const status = document.querySelector('#fat-status');
+      status.textContent = fat > 70 ? `На ${difference} г выше цели` : `Осталось ${difference} г`;
+      status.classList.toggle('over', fat > 70);
+      controls.forEach(button => button.setAttribute('aria-pressed', String(Number(button.dataset.fat) === fat)));
+      drawPlate(fat);
+    }
+    controls.forEach(button => button.addEventListener('click', () => show(Number(button.dataset.fat))));
+    show(75);
+  </script>
+</body>
+</html>

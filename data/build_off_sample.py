@@ -1,18 +1,30 @@
 """Build a small, attributable Open Food Facts sample from a saved API response."""
 import json
 import math
+from html import unescape
 from pathlib import Path
 
 sources = [Path(f"data/off-{country}.json") for country in ("belarus", "russia", "ukraine", "georgia")]
 sources.extend(Path(f"data/off-{country}-2.json") for country in ("belarus", "russia", "ukraine"))
+reviewed = Path("data/off-prepared-selected.json")
 products = []
 for source in sources:
     response = json.loads(source.read_text(encoding="utf-8"))
     products.extend(response["products"])
+searches = Path("data/off-dish-searches.json")
+if searches.exists():
+    for matches in json.loads(searches.read_text(encoding="utf-8")).values():
+        products.extend(matches)
+reviewed_products = json.loads(reviewed.read_text(encoding="utf-8"))["products"]
+for product in reviewed_products:
+    for key in ("product_name", "product_name_ru", "brands", "catalog_name"):
+        if isinstance(product.get(key), str):
+            product[key] = unescape(product[key])
+products.extend(reviewed_products)
 result = []
 seen_codes = set()
 for product in products:
-    name = product.get("product_name_ru") or product.get("product_name")
+    name = product.get("catalog_name") or product.get("product_name_ru") or product.get("product_name")
     code = product.get("code")
     values = product.get("nutriments", {})
     numbers = [values.get(key) for key in ("energy-kcal_100g", "proteins_100g", "fat_100g", "carbohydrates_100g")]

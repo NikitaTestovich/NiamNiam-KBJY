@@ -68,13 +68,18 @@ object XlsxExporter {
     }
 
     private fun escape(value: String): String = buildString {
-        value.forEach { char ->
-            when (char) {
-                '&' -> append("&amp;")
-                '<' -> append("&lt;")
-                '>' -> append("&gt;")
-                else -> if (char == '\n' || char == '\r' || char == '\t' || char >= ' ') append(char)
+        var index = 0
+        while (index < value.length) {
+            val codePoint = value.codePointAt(index)
+            when (codePoint) {
+                '&'.code -> append("&amp;")
+                '<'.code -> append("&lt;")
+                '>'.code -> append("&gt;")
+                '\r'.code -> append("&#13;")
+                '\n'.code, '\t'.code, in 0x20..0xD7FF, in 0xE000..0xFFFD, in 0x10000..0x10FFFF ->
+                    appendCodePoint(codePoint)
             }
+            index += Character.charCount(codePoint)
         }
     }
 }

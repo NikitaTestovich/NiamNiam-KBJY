@@ -1,5 +1,7 @@
 package com.niamniam.kbjy.reports
 
+import com.niamniam.kbjy.BackButton
+
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -44,14 +48,20 @@ fun ReportScreen(dao: DiaryDao, language: AppLanguage, onBack: () -> Unit) {
     val english = language == AppLanguage.ENGLISH
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    var period by remember { mutableStateOf(ReportPeriod.WEEK) }
-    var anchor by remember { mutableStateOf(LocalDate.now()) }
+    var period by rememberSaveable { mutableStateOf(ReportPeriod.WEEK) }
+    var anchorText by rememberSaveable { mutableStateOf(LocalDate.now().toString()) }
+    val anchor = LocalDate.parse(anchorText)
+    var pendingPeriod by rememberSaveable { mutableStateOf<String?>(null) }
+    var pendingAnchor by rememberSaveable { mutableStateOf<String?>(null) }
     var busy by remember { mutableStateOf(false) }
     var message by remember { mutableStateOf<String?>(null) }
+    var exportFailed by rememberSaveable { mutableStateOf(false) }
+    var shareFailed by remember { mutableStateOf(false) }
     var report by remember { mutableStateOf<DailyReport?>(null) }
     var loading by remember { mutableStateOf(true) }
     var loadError by remember { mutableStateOf(false) }
-    LaunchedEffect(period, anchor, dao) {
+    var loadAttempt by remember { mutableStateOf(0) }
+    LaunchedEffect(period, anchor, dao, loadAttempt) {
         loading = true
         loadError = false
         report = null
@@ -66,33 +76,41 @@ fun ReportScreen(dao: DiaryDao, language: AppLanguage, onBack: () -> Unit) {
         }
     }
     val save = rememberLauncherForActivityResult(
-        ActivityResultContracts.CreateDocument("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        ActivityResultContracts.CreateDocument(XLSX_MIME_TYPE)
     ) { uri ->
         if (uri != null) {
-            val selectedReport = report
+            val selectedPeriod = pendingPeriod?.let { runCatching { ReportPeriod.valueOf(it) }.getOrNull() }
+            val selectedAnchor = pendingAnchor?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
+            pendingPeriod = null
+            pendingAnchor = null
             busy = true
             message = null
+            shareFailed = false
             scope.launch {
                 try {
                     withContext(Dispatchers.IO) {
+                        val selectedReport = loadReport(dao, context, checkNotNull(selectedPeriod), checkNotNull(selectedAnchor))
                         val output = context.contentResolver.openOutputStream(uri)
                             ?: error("Could not open selected file")
-                        output.use { XlsxExporter.write(checkNotNull(selectedReport), it, english) }
+                        output.use { XlsxExporter.write(selectedReport, it, english) }
                     }
                     message = if (english) "Report saved" else "Отчёт сохранён"
+                    exportFailed = false
                 } catch (error: CancellationException) {
                     throw error
                 } catch (error: Exception) {
-                    message = if (english) "Could not save the report" else "Не удалось сохранить отчёт"
+                    exportFailed = true
+                    message = if (english) "Could not save the XLSX file. Check free space and choose a writable folder."
+                        else "Не удалось сохранить XLSX. Проверьте свободное место и выберите папку, в которую можно сохранить файл."
                 } finally {
                     busy = false
                 }
             }
-        }
+        } else { pendingPeriod = null; pendingAnchor = null }
     }
     val bounds = periodBounds(period, anchor)
     Column(verticalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.verticalScroll(rememberScrollState()).padding(16.dp)) {
-        OutlinedButton(onClick = onBack, enabled = !busy) { Text(if (english) "Back" else "Назад") }
+        BackButton(english, enabled = !busy, onClick = onBack)
         Text(if (english) "Reports" else "Отчёты")
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -113,11 +131,11 @@ fun ReportScreen(dao: DiaryDao, language: AppLanguage, onBack: () -> Unit) {
             Text("${bounds.first} — ${bounds.second}")
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedButton(onClick = {
-                    anchor = if (period == ReportPeriod.WEEK) anchor.minusWeeks(1) else anchor.minusMonths(1)
-                }, enabled = !busy) { Text(if (english) "Previous" else "Назад") }
+                    anchorText = (if (period == ReportPeriod.WEEK) anchor.minusWeeks(1) else anchor.minusMonths(1)).toString()
+                }, enabled = !busy) { Text(if (english) "Previous period" else "Предыдущий период") }
                 OutlinedButton(onClick = {
-                    anchor = if (period == ReportPeriod.WEEK) anchor.plusWeeks(1) else anchor.plusMonths(1)
-                }, enabled = !busy) { Text(if (english) "Next" else "Вперёд") }
+                    anchorText = (if (period == ReportPeriod.WEEK) anchor.plusWeeks(1) else anchor.plusMonths(1)).toString()
+                }, enabled = !busy) { Text(if (english) "Next period" else "Следующий период") }
             }
         } else {
             Text(if (english) "All recorded dates" else "Все даты с записями")
@@ -125,15 +143,52 @@ fun ReportScreen(dao: DiaryDao, language: AppLanguage, onBack: () -> Unit) {
         }
         when {
             loading -> Text(if (english) "Loading…" else "Загрузка…")
-            loadError -> Text(if (english) "Could not load report" else "Не удалось загрузить отчёт")
+            loadError -> {
+                Text(if (english) "Could not read the diary." else "Не удалось прочитать дневник.", color = MaterialTheme.colorScheme.error)
+                OutlinedButton(onClick = { loadAttempt++ }) { Text(if (english) "Retry loading" else "Повторить загрузку") }
+            }
             report != null -> ReportSummaryView(checkNotNull(report).summary(), english)
         }
         Button(
-            onClick = { save.launch("NiamNiam-${LocalDate.now()}.xlsx") },
+            onClick = {
+                pendingPeriod = period.name
+                pendingAnchor = anchor.toString()
+                save.launch("NiamNiam-${LocalDate.now()}.xlsx")
+            },
             enabled = !busy && !loading && report != null,
             modifier = Modifier.fillMaxWidth(),
-        ) { Text(if (english) "Save XLSX" else "Сохранить XLSX") }
-        message?.let { Text(it) }
+        ) { Text(if (exportFailed) {
+            if (english) "Retry saving" else "Повторить сохранение"
+        } else if (english) "Save XLSX" else "Сохранить XLSX") }
+        OutlinedButton(
+            onClick = {
+                val selectedPeriod = period
+                val selectedAnchor = anchor
+                busy = true
+                message = null
+                shareFailed = false
+                scope.launch {
+                    try {
+                        val chooser = withContext(Dispatchers.IO) {
+                            val selectedReport = loadReport(dao, context, selectedPeriod, selectedAnchor)
+                            reportShareIntent(context, selectedReport, english)
+                        }
+                        context.startActivity(chooser)
+                    } catch (error: CancellationException) {
+                        throw error
+                    } catch (error: Exception) {
+                        shareFailed = true
+                        message = if (english) "Could not share the XLSX file. Try again."
+                        else "Не удалось поделиться XLSX. Попробуйте ещё раз."
+                    } finally {
+                        busy = false
+                    }
+                }
+            },
+            enabled = !busy && !loading && report != null,
+            modifier = Modifier.fillMaxWidth(),
+        ) { Text(if (english) "Share XLSX" else "Поделиться XLSX") }
+        message?.let { Text(it, color = if (exportFailed || shareFailed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface) }
     }
 }
 

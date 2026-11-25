@@ -3,8 +3,12 @@ package com.niamniam.kbjy
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
 import com.niamniam.kbjy.profile.DailyGoal
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 
@@ -23,7 +27,20 @@ class TodaySummaryTest {
             }
         }
         compose.onNodeWithText("+120").assertIsDisplayed()
+        val center = compose.onRoot().fetchSemanticsNode().boundsInRoot.center.x
+        val calories = compose.onNodeWithText("2220 / 2100 ккал").fetchSemanticsNode().boundsInRoot.center.x
+        assertEquals(center, calories, 1.5f)
         compose.onNodeWithText("ккал выше цели").assertIsDisplayed()
-        compose.onNodeWithText("На 5,0 г выше цели").assertIsDisplayed()
+        compose.onNodeWithText("БЖУ относительно дневной цели").assertDoesNotExist()
+        val plate = compose.onNodeWithTag("macro-plate").fetchSemanticsNode().boundsInRoot
+        for (name in listOf("Белки", "Жиры", "Углеводы")) {
+            val label = compose.onNodeWithText(name).fetchSemanticsNode().boundsInRoot
+            assertTrue("$name is to the right of the plate", label.left > plate.right)
+            assertTrue("$name is alongside the plate", label.center.y in plate.top..plate.bottom)
+        }
+        for (amount in listOf("100 / 120 г", "75 / 70 г", "200 / 240 г")) {
+            compose.onNodeWithText(amount).assertIsDisplayed()
+        }
+        compose.onNodeWithText("На 5 г выше цели").assertIsDisplayed()
     }
 }

@@ -1,5 +1,6 @@
 package com.niamniam.kbjy.scanner
 
+import android.content.ActivityNotFoundException
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
@@ -16,6 +17,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,7 +29,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+
+private enum class CaptureFailure {
+    NO_PHOTO,
+    NO_CAMERA_APP,
+    ACCESS_DENIED,
+}
 
 /**
  * Captures a full-resolution image through the installed camera app.
@@ -38,8 +50,9 @@ fun CaptureScreen(
     onManualEntry: () -> Unit,
     modifier: Modifier = Modifier,
     english: Boolean = false,
+    forBarcode: Boolean = false,
 ) {
-    var cancelled by rememberSaveable { mutableStateOf(false) }
+    var failure by rememberSaveable { mutableStateOf<CaptureFailure?>(null) }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val photo = File(context.cacheDir, "camera/capture.jpg")
@@ -54,30 +67,42 @@ fun CaptureScreen(
                 }
             }
             if (bitmap == null) {
-                cancelled = true
+                failure = CaptureFailure.NO_PHOTO
             } else {
-                cancelled = false
                 onImageCaptured(bitmap)
             }
         }
     }
     Column(
-        modifier = modifier.fillMaxSize().padding(20.dp),
+        modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Text(
-            if (english) "Photograph the label" else "Сфотографировать этикетку",
+            if (forBarcode) {
+                if (english) "Scan a barcode or QR code" else "Сканировать штрихкод или QR-код"
+            } else if (english) "Photograph the label" else "Сфотографировать этикетку",
             style = MaterialTheme.typography.headlineSmall,
         )
-        if (cancelled) {
-            Text(if (english) "No photo was captured." else "Снимок не получен.")
+        failure?.let {
+            val message = when (it) {
+                CaptureFailure.NO_PHOTO -> if (english) "No photo was captured. Try again or enter the details manually."
+                    else "Снимок не получен. Повторите попытку или введите данные вручную."
+                CaptureFailure.NO_CAMERA_APP -> if (english) "No camera app is available. Enter the details manually."
+                    else "Приложение камеры недоступно. Введите данные вручную."
+                CaptureFailure.ACCESS_DENIED -> if (english) "Could not access the camera. Enter the details manually."
+                    else "Не удалось получить доступ к камере. Введите данные вручную."
+            }
+            Text(message, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
         }
         Button(onClick = {
+            failure = null
             try {
                 photo.parentFile?.mkdirs()
                 launcher.launch(uri)
-            } catch (_: android.content.ActivityNotFoundException) {
-                cancelled = true
+            } catch (_: ActivityNotFoundException) {
+                failure = CaptureFailure.NO_CAMERA_APP
+            } catch (_: SecurityException) {
+                failure = CaptureFailure.ACCESS_DENIED
             }
         }) {
             Text(if (english) "Open camera" else "Открыть камеру")
